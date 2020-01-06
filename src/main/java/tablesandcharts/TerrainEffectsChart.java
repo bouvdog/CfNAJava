@@ -6,5 +6,5 @@ public interface TerrainEffectsChart {
 
     Predicate<String> isNotePresent = s -> s.contains("^");
 
-    TECReturn readChart(TerrainEffectsChartDefault.Rows r, TerrainEffectsChartDefault.Columns c);
+    TECReturn readChart(TerrainEffectsChartDefault.TerrainTypes r, TerrainEffectsChartDefault.Columns c);
 }

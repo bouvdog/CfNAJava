@@ -1,0 +1,33 @@
+1. A garrison unit in its assignd hex occupies zero stacking space. In addition, an unlimited number of anti-aircraft
+units may occupy a Major City hex at zero stacking space; three anti-aircraft units may occupy an Airfield hex at zero
+stacking space while one anti-aircraft unit may occupy an Air Landing Strip at zero stacking space.
+
+2. Vehicles other than light trucks, recce-type units, and motorcycle infantry may only enter/leave the hex on a
+track. Motorized units may not engagae in combat into/out of a salt march (case 8.44)).
+
+3. Light trucks, motorcycle recce-type units, and motorcycle infantry units may not enter, even via a track).
+
+4. Alexandria and Cairo hexes are level three fortifications, all others are level two.
+
+5. Commonwealth units may be able to use Rail Movement (case 8.7).
+
+6. Negates all hexside terrain feature entry costs and breakdown point values.
+
+7. Applies only to the units/truck points in that hex at that time.
+
+8. Halves all terrain features entry costs and all hex/hexside breakdown points values except the CPA expended 
+and the breakdown acquired by moving a vehicle down an escarpment.
+
+9. Motorized units and trucks may only crass on a track.
+
+10. May only be crossed during a rainstorm if the hexside is crossed by road or railroad (which is treated as a road
+for this purpose) at a cost of two additional CPAs.
+
+11. May only be crossed if the hexside is crossed by a road or a railroad. A motorized unit may so cross at no additional
+CPA or breakdown points.
+
+12. Armor targets receive the defensive benefit only if the hex is a major city hex.
+
+13. Engineer units reduce the cost to enter (case 26.2). If assaulting forces are in an enemy minefield, the non-phasing 
+forces receive L1 shifts for anti-armor and close assault if not already receiving them for occupying a friendly
+minefield. 

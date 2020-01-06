@@ -12,7 +12,7 @@ public class TECController {
     @RequestMapping("/tec")
     public TECReturn getTECValue(@RequestParam(value="terraintype", defaultValue="CLEAR") String terrainType,
                                  @RequestParam(value="action") String action) {
-        TECReturn values = tec.readChart(TerrainEffectsChartDefault.Rows.valueOf(terrainType.toUpperCase()),
+        TECReturn values = tec.readChart(TerrainEffectsChartDefault.TerrainTypes.valueOf(terrainType.toUpperCase()),
                 TerrainEffectsChartDefault.Columns.valueOf(action.toUpperCase()));
         return values;
     }

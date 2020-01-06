@@ -1,6 +1,6 @@
 package map;
 
-public class DefaultHex implements Hex {
+public class HexDefault implements Hex {
 
     private int q;
     private int r;
@@ -18,10 +18,10 @@ public class DefaultHex implements Hex {
     }
 
     public static Hex create(int q, int r, int s, int hexNumber) {
-        return new DefaultHex(q, r, s, hexNumber);
+        return new HexDefault(q, r, s, hexNumber);
     }
 
-    private DefaultHex(int q, int r, int s, int hexNumber) {
+    private HexDefault(int q, int r, int s, int hexNumber) {
         this.q = q;
         this.r = r;
         this.s = s;
