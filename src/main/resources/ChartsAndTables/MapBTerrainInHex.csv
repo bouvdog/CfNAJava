@@ -1,6 +1,6 @@
 5701,ocean
 5702,ocean
-5703,heavy vegetation
+5703,heavy_vegetation
 5704,clear
 5705,rough
 5706,rough
@@ -8,8 +8,8 @@
 5708,rough
 5709,rough
 5710,rough
-5601,heavy vegetation
-5602,heavy vegetation
+5601,heavy_vegetation
+5602,heavy_vegetation
 5603,rough
 5604,rough
 5605,rough
@@ -18,7 +18,7 @@
 5608,rough
 5609,mountain
 5610,mountain
-5501,heavy vegetation
+5501,heavy_vegetation
 5502,rough,
 5503,rough
 5504,rough

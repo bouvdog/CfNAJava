@@ -17,6 +17,7 @@ public class TheaterDefault implements Theater {
     }
 
     private TheaterDefault() {
+        /*
         MapSection sectionA = MapSectionDefault.create("A");
         MapSection sectionB = MapSectionDefault.create("B");
         MapSection sectionC = MapSectionDefault.create("C");
@@ -27,6 +28,8 @@ public class TheaterDefault implements Theater {
         sections.put("C",sectionC);
         sections.put("D",sectionD);
         sections.put("E",sectionE);
+
+         */
 
     }
 

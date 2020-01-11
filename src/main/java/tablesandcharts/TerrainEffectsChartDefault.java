@@ -12,8 +12,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 // Relative file paths internal to the project are assumed to be correct
-// Given that the location of the project could be different on different systems
-// we have a properties files to assist with installation.
+//
+// This class represents the Terrain Effects Chart which returns contextual information
+// about the costs in CPA (capability point allowance) for movement and the shifts that
+// affect combat (and some other data such as breakdown).
+//
+// It is represented closely to the physical, paper chart to aid comprehension and debugging
 public class TerrainEffectsChartDefault implements TerrainEffectsChart {
 
     public enum TerrainTypes {
@@ -21,7 +25,7 @@ public class TerrainEffectsChartDefault implements TerrainEffectsChart {
         CLEAR, GRAVEL, SALT_MARSH, HEAVY_VEGETATION, ROUGH, MOUNTAIN, DELTA, DESERT, MAJOR_CITY,
         SWAMP, VILLAGE_BIR_OASIS, RAILROAD, ROAD, TRACK, RIDGE, UP_SLOPE, DOWN_SLOPE, UP_ESCARPMENT,
         DOWN_ESCARPMENT, WADI, MAJOR_RIVER, MINOR_RIVER, FORT_LEVEL_ONE, FORT_LEVEL_TWO, FORT_LEVEL_THREE,
-        FRIENDLY_MINEFIELD, ENEMY_MINEFIELD
+        FRIENDLY_MINEFIELD, ENEMY_MINEFIELD, OCEAN
     }
 
     public enum Columns {
@@ -65,7 +69,6 @@ public class TerrainEffectsChartDefault implements TerrainEffectsChart {
                     .map(CSVRecord::toMap)
                     .collect(Collectors.toMap(e -> e.get("TERRAIN_TYPE").toUpperCase(), Function.identity()));
             intermediateStep.forEach((k, v) -> TEC.put(TerrainTypes.valueOf(k), v));
-
             reader.close();
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
@@ -90,8 +93,6 @@ public class TerrainEffectsChartDefault implements TerrainEffectsChart {
                     .collect(Collectors.toMap(e->e.get("row").toUpperCase()
                     + "|"
                     + e.get("column").toUpperCase(), e->e.get(NOTE_NUMBER)));
-
-
             reader.close();
         } catch (Exception ex) {
             // TODO: comment file location assumptions in readme
