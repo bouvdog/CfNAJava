@@ -2,7 +2,6 @@ import org.junit.jupiter.api.Test;
 import tablesandcharts.TECReturn;
 import tablesandcharts.TerrainEffectsChartDefault;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

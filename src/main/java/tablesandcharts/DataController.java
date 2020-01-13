@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TECController {
+public class DataController {
 
     TerrainEffectsChart tec = TerrainEffectsChartDefault.getInstance();
 

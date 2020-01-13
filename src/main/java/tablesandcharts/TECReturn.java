@@ -1,7 +1,5 @@
 package tablesandcharts;
 
-import java.util.List;
-
 public class TECReturn {
     private String value;
 

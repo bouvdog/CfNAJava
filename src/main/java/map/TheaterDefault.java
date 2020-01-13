@@ -1,7 +1,5 @@
 package map;
 
-import tablesandcharts.TerrainEffectsChartDefault;
-
 import java.util.Map;
 
 public class TheaterDefault implements Theater {
@@ -28,7 +26,6 @@ public class TheaterDefault implements Theater {
         sections.put("C",sectionC);
         sections.put("D",sectionD);
         sections.put("E",sectionE);
-
          */
 
     }

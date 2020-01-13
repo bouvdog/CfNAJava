@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+// TODO: make this a Singleton to avoid the file reads that would occur on each object instantiation
 public class MapSectionDefault implements MapSection {
 
     private int map_height = 10;
@@ -25,6 +26,15 @@ public class MapSectionDefault implements MapSection {
     private Map<Integer, TerrainEffectsChartDefault.TerrainTypes> terrainInHex = new HashMap<>();
     private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> terrainOnSides
             = new HashMap<>();
+
+    public MapSectionDefault(String mapSection, String startHexNumber) {
+        buildAMapSection(mapSection, Integer.valueOf(startHexNumber));
+        try {
+            buildTerrainInHex(mapSection);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
 
     @Override
     public TerrainEffectsChartDefault.TerrainTypes getTerrainInHex(int hexNumber) {
@@ -76,7 +86,7 @@ public class MapSectionDefault implements MapSection {
     // that is not represented/printed but the space is used for a map of Malta and other
     // table and charts. In this program, these ocean hexes exist until I can figure out a
     // slight optimization to remove them.
-     public void buildAMapSection(String section, int startHex) {
+     void buildAMapSection(String section, int startHex) {
         int hexNumber = startHex;
         int column = 1;
 
@@ -90,35 +100,22 @@ public class MapSectionDefault implements MapSection {
             hexNumber = hexNumber + 100;
         }
 
-        //buildTerrainInHex(section);
         //buildHexSideTerrain(section);
-        //terrain_effects_chart_ = tec;
     }
 
     // Assumption: there is only one terrain type in a hex. Fortifications and other 'additions' that apply to the
     // hex will be in another table.
-    public void buildTerrainInHex(final String section) throws Exception {
+    void buildTerrainInHex(final String section) throws Exception {
         String fileToRead = "ChartsAndTables/Map" + section + "TerrainInHex.csv";
 
-        InputStream is = getClass()
+        InputStream cvsFile = getClass()
                 .getClassLoader()
                 .getResourceAsStream(fileToRead);
-        var reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(cvsFile));
         Iterable<CSVRecord> mapTerrain = CSVFormat.RFC4180.withHeader(TerrainEffectsChartDefault.Columns.class).parse(reader);
 
-        /*
-        Map<String, Map<String,String>> intermediateStep = null;
-        intermediateStep = StreamSupport.stream(stringTEC.spliterator(), false)
-                // Header row is skipped
-                .skip(1)
-                .map(CSVRecord::toMap)
-                .collect(Collectors.toMap(e -> e.get("TERRAIN_TYPE").toUpperCase(), Function.identity()));
-        intermediateStep.forEach((k, v) -> TEC.put(TerrainEffectsChartDefault.TerrainTypes.valueOf(k), v));
-        reader.close();
-        */
-
         for (CSVRecord r : mapTerrain) {
-            // a 'multihex' terrain is a way to reduce typing in the data files. Since so much of the terrain is repeated
+            // A 'multihex' terrain is a way to reduce typing in the data files. Since so much of the terrain is repeated
             // on contiguous hexes, the terrain can be represented by a range of hex numbers separated by a dash. For instance,
             // 5009-5010. This is followed by a comma (CSV format file) and the terrain 'name' or description. For instance,
             // 5009-5010,gravel.
