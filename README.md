@@ -8,11 +8,11 @@ As of 1-12-2020 very little is implemented.
 Algorithms and ideas about hexgrids were leveraged and taken from: https://www.redblobgames.com/grids/hexagons/
 
 ## Build Dependencies
-Java 11.0.5
-Maven 3.6.3
-Docker for Windows 19.03.5
+Java 11.0.5  
+Maven 3.6.3  
+Docker for Windows 19.03.5  
 
-The docker command I have used to launch the container is:
+The docker command I have used to launch the container is:  
 docker container run --name cfna -d -p 8080:8080 <image id>
 
 ## Land Game Rules of Play
@@ -31,14 +31,14 @@ General Rule
 All major cities in the game are considered fortifications. In addition, players may construct 
 fortifications (see Case 24.4). Fortifications are availabe in levels, reflective of the depth and
 strength of the fortifications. Most fortiifications and cities have two possible levels, but Cairo
-and Alexandria have three possible levels. Fortifications give beneifts to units in that hex.
-Cases
+and Alexandria have three possible levels. Fortifications give beneifts to units in that hex.  
+Cases  
 25.11 Each level of Foritifcation gives an increasing defensive benefit to units in that hex 
-(see T.E.C., Case 8.37)
+(see T.E.C., Case 8.37)  
 25.12 Each major city on the game-map is a Level 2 fortification. Cairo and Alexandria are Level 3 
-fortifications. Villages are not fortifications.
+fortifications. Villages are not fortifications.  
 25.13 Constructed fortifications are either Level 1 or Level 2. Fortifications can never be constructed
-higher than Level 2, except in Cairo or Alexandria. 
+higher than Level 2, except in Cairo or Alexandria.   
 
 
 
