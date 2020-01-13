@@ -13,7 +13,7 @@ Maven 3.6.3
 Docker for Windows 19.03.5  
 
 The docker command I have used to launch the container is:  
-docker container run --name cfna -d -p 8080:8080 <image id>
+docker container run --name cfna -d -p 8080:8080 image-id
 
 ## Land Game Rules of Play
 
