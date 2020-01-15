@@ -1,15 +1,15 @@
-5705, E-up slope, SE-up slope
-5706, W-down slope
-5603, SW-up escarpment
-5604, SW-up escarpment, SE-up escarpment, E-up slope
-5501, SW-up escarpment, SE-up escarpment
-5502, SW-up escarpment, SE-up escarpment
-5503, SW-up escarpment, SE-up escarpment, E-up slope
-5504, NW-down escarpment, NE-down escarpment
-5505, NW-down escarpment
-5401, NW-down escarpment, NE-down escarpment
-5402, NW-down escarpment, NE-down escarpment
-5403, NW-down escarpment
+5705, E-up_slope, SE-up_slope
+5706, W-down_slope
+5603, SW-up_escarpment
+5604, SW-up_escarpment, SE-up_escarpment, E-up_slope
+5501, SW-up_escarpment, SE-up_escarpment
+5502, SW-up_escarpment, SE-up_escarpment
+5503, SW-up_escarpment, SE-up_escarpment, E-up_slope
+5504, NW-down_escarpment, NE-down_escarpment
+5505, NW-down_escarpment
+5401, NW-down_escarpment, NE-down_escarpment
+5402, NW-down_escarpment, NE-down_escarpment
+5403, NW-down_escarpment
 5208, E-wadi
 5209, W-wadi
 5109, E-wadi

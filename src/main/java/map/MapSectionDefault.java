@@ -2,15 +2,18 @@ package map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import tablesandcharts.TerrainEffectsChart;
 import tablesandcharts.TerrainEffectsChartDefault;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 // TODO: make this a Singleton to avoid the file reads that would occur on each object instantiation
@@ -100,7 +103,7 @@ public class MapSectionDefault implements MapSection {
             hexNumber = hexNumber + 100;
         }
 
-        //buildHexSideTerrain(section);
+        buildHexSideTerrain(section);
     }
 
     // Assumption: there is only one terrain type in a hex. Fortifications and other 'additions' that apply to the
@@ -131,5 +134,48 @@ public class MapSectionDefault implements MapSection {
                         TerrainEffectsChartDefault.TerrainTypes.valueOf(r.get(1).trim().toUpperCase()));
             }
         }
+    }
+
+    Predicate<CSVRecord> notEmptyRecord = r -> r.get(0).length() > 0;
+
+    private void buildHexSideTerrain(final String section)
+    {
+        try {
+            String fileToRead = "ChartsAndTables/Map" + section + "HexSideTerrain.csv";
+
+            InputStream cvsFile = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream(fileToRead);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(cvsFile));
+            Iterable<CSVRecord> hexSideTerrain = CSVFormat.RFC4180.withHeader(TerrainEffectsChartDefault.Columns.class).parse(reader);
+
+            // 5604, SW-up escarpment, SE-up escarpment, E-up slope
+            Integer hexNumber;
+            for (CSVRecord r : hexSideTerrain) {
+                // there seems to be an empty record at the end of the 'file'
+                if (notEmptyRecord.test(r)) {
+                    hexNumber = Integer.valueOf(r.get(0));
+                    terrainOnSides.put(hexNumber, buildSideTerrain(r));
+                }
+            }
+            reader.close();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> buildSideTerrain(final CSVRecord sides) {
+        Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> sideTerrain;
+
+        // TODO: understand this line
+        Iterable<String> i = () -> sides.iterator();
+        Stream<String> streamOfSides = StreamSupport.stream(i.spliterator(), false);
+        sideTerrain = streamOfSides
+                // We skip the first element because it is the hex number and not a hexside to terrain mapping
+                .skip(1)
+                .map(s -> s.split(DASH))
+                .collect(Collectors.toMap(a -> HexDefault.HexSide.valueOf(a[0].trim()),
+                        a -> TerrainEffectsChartDefault.TerrainTypes.valueOf(a[1].toUpperCase())));
+        return sideTerrain;
     }
 }
