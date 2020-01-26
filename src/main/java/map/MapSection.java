@@ -1,5 +1,6 @@
 package map;
 
+import tablesandcharts.TerrainEffectsChart;
 import tablesandcharts.TerrainEffectsChartDefault;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ public interface MapSection {
     TerrainEffectsChartDefault.TerrainTypes getRoad(int hexNumber, HexDefault.HexSide hs);
     Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> getRoads(int hexNumber);
 
-    int defensiveBenefit(int hexNumber, HexDefault.HexSide direction);
+    Integer defensiveBenefit(int hexNumber, HexDefault.HexSide direction, TerrainEffectsChartDefault.Columns c);
 
     Hex getHex(int hexNumber);
 }

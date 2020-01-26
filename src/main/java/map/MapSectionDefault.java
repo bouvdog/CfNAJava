@@ -2,6 +2,7 @@ package map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import tablesandcharts.TECReturn;
 import tablesandcharts.TerrainEffectsChart;
 import tablesandcharts.TerrainEffectsChartDefault;
 
@@ -24,11 +25,10 @@ public class MapSectionDefault implements MapSection {
     private String DASH = "-";
 
     private Map<Integer, Hex> aMapSection = new HashMap<>();
-    private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> roadNetwork
-            = new HashMap<>();
     private Map<Integer, TerrainEffectsChartDefault.TerrainTypes> terrainInHex = new HashMap<>();
-    private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> terrainOnSides
-            = new HashMap<>();
+
+    private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> terrainOnSides;
+    private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> roadNetwork;
 
     public MapSectionDefault(String mapSection, String startHexNumber) {
         buildAMapSection(mapSection, Integer.valueOf(startHexNumber));
@@ -51,7 +51,7 @@ public class MapSectionDefault implements MapSection {
 
     @Override
     public TerrainEffectsChartDefault.TerrainTypes getRoad(int hexNumber, HexDefault.HexSide hs) {
-        return null;
+        return roadNetwork.get(hexNumber).get(hs);
     }
 
     @Override
@@ -59,9 +59,29 @@ public class MapSectionDefault implements MapSection {
         return null;
     }
 
+
     @Override
-    public int defensiveBenefit(int hexNumber, HexDefault.HexSide direction) {
-        return 0;
+    public Integer defensiveBenefit(int hexNumber, HexDefault.HexSide direction, TerrainEffectsChartDefault.Columns c) {
+            TerrainEffectsChartDefault.TerrainTypes inHex = getTerrainInHex(hexNumber);
+            TerrainEffectsChartDefault.TerrainTypes onSideOfHex = getTerrainOnSide(hexNumber, direction);
+
+            TerrainEffectsChart tec = TerrainEffectsChartDefault.getInstance();
+            String shiftsInHex = tec.readChart(inHex, c).getValue();
+            String shiftsSide = tec.readChart(onSideOfHex, c).getValue();
+
+
+        return convertShiftsToNumbers(shiftsInHex) + convertShiftsToNumbers(shiftsSide);
+        }
+
+
+    // TODO: right shifts
+    Integer convertShiftsToNumbers(final String shifts) {
+        Integer value = 0;
+        if (shifts.contains("L")) {
+            String[] shift = shifts.split("L");
+            value = Integer.valueOf(shift[1]);
+        }
+        return value;
     }
 
     @Override
@@ -88,7 +108,7 @@ public class MapSectionDefault implements MapSection {
     // Each map is 33/34 hexes across and 60 hexes 'tall'. Map A has a large section of ocean
     // that is not represented/printed but the space is used for a map of Malta and other
     // table and charts. In this program, these ocean hexes exist until I can figure out a
-    // slight optimization to remove them.
+    // the optimization to remove them.
      void buildAMapSection(String section, int startHex) {
         int hexNumber = startHex;
         int column = 1;
@@ -103,45 +123,54 @@ public class MapSectionDefault implements MapSection {
             hexNumber = hexNumber + 100;
         }
 
-        buildHexSideTerrain(section);
+        buildTerrainInHex(section);
+        terrainOnSides = buildHexSideTerrain(section, "HexSideTerrain.csv");
+        roadNetwork = buildHexSideTerrain(section, "Road.csv");
     }
 
     // Assumption: there is only one terrain type in a hex. Fortifications and other 'additions' that apply to the
     // hex will be in another table.
-    void buildTerrainInHex(final String section) throws Exception {
+    void buildTerrainInHex(final String section) {
         String fileToRead = "ChartsAndTables/Map" + section + "TerrainInHex.csv";
 
-        InputStream cvsFile = getClass()
-                .getClassLoader()
-                .getResourceAsStream(fileToRead);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(cvsFile));
-        Iterable<CSVRecord> mapTerrain = CSVFormat.RFC4180.withHeader(TerrainEffectsChartDefault.Columns.class).parse(reader);
+        try {
+            InputStream cvsFile = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream(fileToRead);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(cvsFile));
+            Iterable<CSVRecord> mapTerrain = CSVFormat.RFC4180.withHeader(TerrainEffectsChartDefault.Columns.class).parse(reader);
 
-        for (CSVRecord r : mapTerrain) {
-            // A 'multihex' terrain is a way to reduce typing in the data files. Since so much of the terrain is repeated
-            // on contiguous hexes, the terrain can be represented by a range of hex numbers separated by a dash. For instance,
-            // 5009-5010. This is followed by a comma (CSV format file) and the terrain 'name' or description. For instance,
-            // 5009-5010,gravel.
-            if (isMultiHexPresent(r.get(0))) {
-                String[] startAndEnd = r.get(0).split(DASH);
-                int start = Integer.valueOf(startAndEnd[0]);
-                int end = Integer.valueOf(startAndEnd[1]);
-                for (int i = start; i <= end; i++) {
-                    terrainInHex.put(i, TerrainEffectsChartDefault.TerrainTypes.valueOf(r.get(1).trim().toUpperCase()));
+            for (CSVRecord r : mapTerrain) {
+                // A 'multihex' terrain is a way to reduce typing in the data files. Since so much of the terrain is repeated
+                // on contiguous hexes, the terrain can be represented by a range of hex numbers separated by a dash. For instance,
+                // 5009-5010. This is followed by a comma (CSV format file) and the terrain 'name' or description. For instance,
+                // 5009-5010,gravel.
+                if (isMultiHexPresent(r.get(0))) {
+                    String[] startAndEnd = r.get(0).split(DASH);
+                    int start = Integer.valueOf(startAndEnd[0]);
+                    int end = Integer.valueOf(startAndEnd[1]);
+                    for (int i = start; i <= end; i++) {
+                        terrainInHex.put(i, TerrainEffectsChartDefault.TerrainTypes.valueOf(r.get(1).trim().toUpperCase()));
+                    }
+                } else {
+                    terrainInHex.put(Integer.valueOf(r.get(0)),
+                            TerrainEffectsChartDefault.TerrainTypes.valueOf(r.get(1).trim().toUpperCase()));
                 }
-            } else {
-                terrainInHex.put(Integer.valueOf(r.get(0)),
-                        TerrainEffectsChartDefault.TerrainTypes.valueOf(r.get(1).trim().toUpperCase()));
             }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
     Predicate<CSVRecord> notEmptyRecord = r -> r.get(0).length() > 0;
 
-    private void buildHexSideTerrain(final String section)
+    private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>>
+    buildHexSideTerrain(final String section, final String type)
     {
+        Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> terrainTypeOnSides
+                = new HashMap<>();
         try {
-            String fileToRead = "ChartsAndTables/Map" + section + "HexSideTerrain.csv";
+            String fileToRead = "ChartsAndTables/Map" + section + type;
 
             InputStream cvsFile = getClass()
                     .getClassLoader()
@@ -155,16 +184,18 @@ public class MapSectionDefault implements MapSection {
                 // there seems to be an empty record at the end of the 'file'
                 if (notEmptyRecord.test(r)) {
                     hexNumber = Integer.valueOf(r.get(0));
-                    terrainOnSides.put(hexNumber, buildSideTerrain(r));
+                    terrainTypeOnSides.put(hexNumber, buildSideTerrain(r));
                 }
             }
             reader.close();
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
         }
+        return terrainTypeOnSides;
     }
 
-    Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> buildSideTerrain(final CSVRecord sides) {
+    Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>
+    buildSideTerrain(final CSVRecord sides) {
         Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> sideTerrain;
 
         // TODO: understand this line
@@ -178,4 +209,5 @@ public class MapSectionDefault implements MapSection {
                         a -> TerrainEffectsChartDefault.TerrainTypes.valueOf(a[1].toUpperCase())));
         return sideTerrain;
     }
+
 }
