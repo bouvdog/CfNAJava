@@ -30,14 +30,19 @@ public class TestMapSectionDefault {
     }
 
     @Test
-    public void givenMapSection_whenHexSideHexNumberAndCombatTypeprovided_returnNumberOfShifts() throws Exception {
-        // 5402, NW-down_escarpment, NE-down escarpment
+    public void givenMapSection_whenHexSideHexNumberAndCombatTypeProvided_returnNumberOfShifts() throws Exception {
         int leftShifts = ms.defensiveBenefit(5209, HexDefault.HexSide.W,
                 TerrainEffectsChartDefault.Columns.CLOSE_ASSAULT);
 
         // Two left shifts for rough and one left shift for wadi (assuming dry)
-        assertEquals(3, leftShifts);
+        assertEquals(-3, leftShifts);
+
+        // 5706, NW-down_slope, W-down_slope
+        // 5705,rough
+        // If there is a close assault from 5706 to 5705, we will have shifts for the rough terrain in 5705,
+        // but also the shift to attacking down slope from 5706.
+        int shifts = ms.defensiveBenefit(5706, HexDefault.HexSide.W,
+                TerrainEffectsChartDefault.Columns.CLOSE_ASSAULT);
+        assertEquals(-1, shifts);
     }
-
-
 }

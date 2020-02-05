@@ -61,27 +61,67 @@ public class MapSectionDefault implements MapSection {
 
 
     @Override
-    public Integer defensiveBenefit(int hexNumber, HexDefault.HexSide direction, TerrainEffectsChartDefault.Columns c) {
-            TerrainEffectsChartDefault.TerrainTypes inHex = getTerrainInHex(hexNumber);
-            TerrainEffectsChartDefault.TerrainTypes onSideOfHex = getTerrainOnSide(hexNumber, direction);
+    public Integer defensiveBenefit(final int hexNumber, HexDefault.HexSide direction, TerrainEffectsChartDefault.Columns c) {
+        int targetHex = hexNumberFromDirection(hexNumber, direction);
+        TerrainEffectsChartDefault.TerrainTypes inHex = getTerrainInHex(targetHex);
+        TerrainEffectsChartDefault.TerrainTypes onSideOfHex = getTerrainOnSide(hexNumber, direction);
 
-            TerrainEffectsChart tec = TerrainEffectsChartDefault.getInstance();
-            String shiftsInHex = tec.readChart(inHex, c).getValue();
-            String shiftsSide = tec.readChart(onSideOfHex, c).getValue();
-
-
+        TerrainEffectsChart tec = TerrainEffectsChartDefault.getInstance();
+        String shiftsInHex = tec.readChart(inHex, c).getValue();
+        String shiftsSide = tec.readChart(onSideOfHex, c).getValue();
         return convertShiftsToNumbers(shiftsInHex) + convertShiftsToNumbers(shiftsSide);
-        }
+    }
 
 
-    // TODO: right shifts
+    // Left shifts are negative, right shifts are positive and terrain without shifts has zero shifts
+    // When we calculate shifts we want to determine the hex side terrain of the origin hex (attacker)
+    // and the hex terrain of the start hex. Directionality is important because of slopes and
+    // escarpments. Up and down slope/escarpment have different shifts.
     Integer convertShiftsToNumbers(final String shifts) {
         Integer value = 0;
         if (shifts.contains("L")) {
             String[] shift = shifts.split("L");
+            value = Integer.valueOf(shift[1]) * -1;
+        } else if (shifts.contains("R")) {
+            String[] shift = shifts.split("R");
             value = Integer.valueOf(shift[1]);
         }
         return value;
+    }
+
+    // To make sense of this method, you need to look at the map.
+    int hexNumberFromDirection(final int startHex, final HexDefault.HexSide direction) {
+        int targetHex = 0;
+        switch (direction) {
+            case W:
+                targetHex = startHex - 1;
+                break;
+            case E:
+                targetHex = startHex + 1;
+                break;
+            case NW:
+                targetHex = (isEven(startHex)) ? startHex + 100 : startHex + 99;
+                break;
+            case NE:
+                targetHex = (isEven(startHex)) ? startHex + 99 : startHex + 100;
+                break;
+            case SW:
+                targetHex = (isEven(startHex)) ? startHex - 100 : startHex - 99;
+                break;
+            case SE:
+                targetHex = (isEven(startHex)) ? startHex - 99 : startHex - 100;
+                break;
+        }
+        return targetHex;
+    }
+
+    boolean isEven(final int startHex) {
+        int masked = startHex / 100;
+        boolean even = false;
+        if (masked % 2 == 0) {
+            even = true;
+        }
+        return even;
     }
 
     @Override
@@ -109,7 +149,7 @@ public class MapSectionDefault implements MapSection {
     // that is not represented/printed but the space is used for a map of Malta and other
     // table and charts. In this program, these ocean hexes exist until I can figure out a
     // the optimization to remove them.
-     void buildAMapSection(String section, int startHex) {
+    void buildAMapSection(String section, int startHex) {
         int hexNumber = startHex;
         int column = 1;
 
@@ -165,8 +205,7 @@ public class MapSectionDefault implements MapSection {
     Predicate<CSVRecord> notEmptyRecord = r -> r.get(0).length() > 0;
 
     private Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>>
-    buildHexSideTerrain(final String section, final String type)
-    {
+    buildHexSideTerrain(final String section, final String type) {
         Map<Integer, Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes>> terrainTypeOnSides
                 = new HashMap<>();
         try {
