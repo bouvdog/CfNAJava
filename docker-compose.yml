@@ -1,0 +1,11 @@
+version: '3.7'
+
+# docker run -p 8080:8080 knewsom/cfna
+
+services:
+    cfna:
+        image: knewsom/cfna
+#        container_name: cfna
+        ports: 
+            - "8080:8080"
+

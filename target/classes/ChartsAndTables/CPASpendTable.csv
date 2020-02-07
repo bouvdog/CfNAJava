@@ -1,0 +1,45 @@
+detach,1
+attach_assigned,1
+attach_unassigned,2
+absorb_replacements, 1
+enter_hex, TEC
+enter_friendly_minefield_eng, TEC
+enter_friendly_minefield_leg, 1+TEC
+enter_friendly_minefield_motor, 4+TEC
+enter_enemy_minefield_leg_eng, 2+TEC
+enter_enemy_minefield_motor_eng, 4+TEC
+enter_enemy_minefield_leg, 4+TEC
+enter_enemy_minefield_motor, CPA+TEC
+break_contact, 2
+disengage, 4
+reserves, 0
+barrage_or_assault_phasing,5
+undergo_barrage_phasing,3
+probe_phasing,2
+barrage_nonphasing, 3
+undergo_barrage_nonphasing, 3
+defend_against_assualt, 3
+defend_against_probe, 2
+patrol,0
+desert_raider_raid,5
+poison_water_source_attempt,1
+sweeten_water_source_attempt,5
+blow_supply_dump_attempt, CPA/3
+draw_water_organizational_phase, 0
+load_unload_troops_organizational_phase, 0
+load_unload_supplies_organizational_phase,0
+draw_water,1
+load_unload_troops,2
+load_unload_supplies,2
+construct_supply_dump,3
+construct_dummy_supply_dump,2
+construction, 0
+railroad_transport, 0
+interport_transport, 0
+paradrop_paratroops, 0
+paradrop_commands, 5
+commando_amphibious, 5 or 10 + TEC
+ready_airplanes,10
+
+
+

@@ -64,7 +64,7 @@ public class TestMapSectionDefault {
     public void givenMapSection_whenMoving_thenReturnCPACostForAdjacentHex() throws Exception {
         String cpaCost = ms.cpaCostToEnter(5209, HexDefault.HexSide.W,
                 TerrainEffectsChartDefault.Columns.NON_MOTORIZED);
-        assertEquals(4, cpaCost);
+        assertEquals("4", cpaCost);
 
     }
 }

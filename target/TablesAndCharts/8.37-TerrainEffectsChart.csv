@@ -1,0 +1,28 @@
+terrain type,non_motorized,motorized,breakdown,barrage,anti_armor,close_assault,stacking_limit
+clear,2,2,4,NA,NA,NA,6
+gravel,2,2,6,NA,NA,NA,6
+salt_marsh,3,2,6,NA,NA,R1,6
+heavy_vegetation,3,3,3,NA,L1,L1,6
+rough,3,4,8,L1,L1,L2,6
+mountain,4,6,12,L2,L2,L3,3
+delta,2,4,2,NA,NA,NA,6
+desert,3,4,24,NA,NA,NA,6
+major_city,1,0.5,0.5,NA,NA,NA,6
+swamp,only,only,only,NA,NA,NA,6
+village_bir_oasis,same,same,same,same,same,same,"same							"
+railroad,same,same,same,same,same,same,"same							"
+road,1,0.5,0.5,NA,NA,NA,5
+track,1,1,NA,NA,NA,NA,5
+ridge,2,4,2,NA,L2,L2,"NA	"
+up_slope,2,4,2,NA,L1,L2,"NA	"
+down_slope,1,2,2,NA,L1,R1,"NA	"
+up_escarpment,6,P,NA,NA,P,L3,"NA	"
+down_escarpment,4,8,6,NA,L2,R1,"NA	"
+wadi,1,4,8,NA,NA,L1,"NA	"
+major_river,3,P,NA,NA,NA,L6,"NA	"
+minor_river,3,6,1,NA,NA,L2,"NA	"
+fort_level_one,same,same,same,L1,L1,L2,"NA	"
+fort_level_two,same,same,same,L2,L2,L3,"NA	"
+fort_level_three,same,same,same,L2,L2,L4,"NA	"
+friendly_minefield,1,4,0,NA,L1,L1,"NA	"
+enemy_minefield,4,CPA,2,NA,NA,NA,"NA				"

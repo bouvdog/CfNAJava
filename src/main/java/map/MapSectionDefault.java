@@ -88,7 +88,8 @@ public class MapSectionDefault implements MapSection {
     }
 
     private String calculateCPACost(List<String> values) {
-        return "0";
+        int cost = values.stream().mapToInt(Integer::valueOf).sum();
+        return String.valueOf(cost);
     }
 
     private List<String> hexAndHexSideCosts(final int hexNumber, final HexDefault.HexSide direction,
@@ -155,7 +156,7 @@ public class MapSectionDefault implements MapSection {
         return targetHex;
     }
 
-    boolean isEven(final int startHex) {
+    private boolean isEven(final int startHex) {
         int masked = startHex / 100;
         boolean even = false;
         if (masked % 2 == 0) {
@@ -277,7 +278,6 @@ public class MapSectionDefault implements MapSection {
     buildSideTerrain(final CSVRecord sides) {
         Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> sideTerrain;
 
-        // TODO: understand this line
         Iterable<String> i = () -> sides.iterator();
         Stream<String> streamOfSides = StreamSupport.stream(i.spliterator(), false);
         sideTerrain = streamOfSides
