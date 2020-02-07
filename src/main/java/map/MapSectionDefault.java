@@ -2,7 +2,6 @@ package map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import tablesandcharts.TECReturn;
 import tablesandcharts.TerrainEffectsChart;
 import tablesandcharts.TerrainEffectsChartDefault;
 
@@ -10,8 +9,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,14 +36,32 @@ public class MapSectionDefault implements MapSection {
         }
     }
 
+    // It is very unlikely that in the final version of the game assistant that hexnumbers not
+    // on maps will be submitted.
     @Override
-    public TerrainEffectsChartDefault.TerrainTypes getTerrainInHex(int hexNumber) {
-        return terrainInHex.get(hexNumber);
+    public TerrainEffectsChartDefault.TerrainTypes getTerrainInHex(int hexNumber) throws HexValueNotOnMap {
+        TerrainEffectsChartDefault.TerrainTypes terrain = terrainInHex.get(hexNumber);
+        if (terrain == null) {
+            throw new HexValueNotOnMap("Hex number " + hexNumber + " not on map section.");
+        }
+        return terrain;
     }
 
     @Override
-    public TerrainEffectsChartDefault.TerrainTypes getTerrainOnSide(int hexNumber, HexDefault.HexSide hs) {
-        return terrainOnSides.get(hexNumber).get(hs);
+    public Optional<TerrainEffectsChartDefault.TerrainTypes> getTerrainOnSide(int hexNumber, HexDefault.HexSide hs) {
+        TerrainEffectsChartDefault.TerrainTypes terrain = terrainInHex.get(hexNumber);
+        if (terrain == null) {
+            throw new HexValueNotOnMap("Hex number " + hexNumber + " not on map section.");
+        }
+
+        // There are two cases here: 1) where the hex has no hexside terrain at all and 2) where
+        // there is no hexside terrain in the provided direction.
+        Map<HexDefault.HexSide, TerrainEffectsChartDefault.TerrainTypes> sides = terrainOnSides.get(hexNumber);
+        if (sides == null) {
+            return Optional.empty();
+        }
+        TerrainEffectsChartDefault.TerrainTypes onSideTerrain = terrainOnSides.get(hexNumber).get(hs);
+        return Optional.of(onSideTerrain);
     }
 
     @Override
@@ -61,15 +76,40 @@ public class MapSectionDefault implements MapSection {
 
 
     @Override
-    public Integer defensiveBenefit(final int hexNumber, HexDefault.HexSide direction, TerrainEffectsChartDefault.Columns c) {
+    public Integer defensiveBenefit(final int hexNumber, final HexDefault.HexSide direction, final TerrainEffectsChartDefault.Columns c) {
+        List<String> values = hexAndHexSideCosts(hexNumber, direction, c);
+        return convertShiftsToNumbers(values.get(0)) + convertShiftsToNumbers(values.get(1));
+    }
+
+    @Override
+    public String cpaCostToEnter(int hexNumber, HexDefault.HexSide direction, TerrainEffectsChartDefault.Columns modality) {
+        List<String> values = hexAndHexSideCosts(hexNumber, direction, modality);
+        return calculateCPACost(values);
+    }
+
+    private String calculateCPACost(List<String> values) {
+        return "0";
+    }
+
+    private List<String> hexAndHexSideCosts(final int hexNumber, final HexDefault.HexSide direction,
+                                            final TerrainEffectsChartDefault.Columns c) {
         int targetHex = hexNumberFromDirection(hexNumber, direction);
         TerrainEffectsChartDefault.TerrainTypes inHex = getTerrainInHex(targetHex);
-        TerrainEffectsChartDefault.TerrainTypes onSideOfHex = getTerrainOnSide(hexNumber, direction);
-
+        Optional<TerrainEffectsChartDefault.TerrainTypes> onSideOfHex = getTerrainOnSide(hexNumber, direction);
         TerrainEffectsChart tec = TerrainEffectsChartDefault.getInstance();
-        String shiftsInHex = tec.readChart(inHex, c).getValue();
-        String shiftsSide = tec.readChart(onSideOfHex, c).getValue();
-        return convertShiftsToNumbers(shiftsInHex) + convertShiftsToNumbers(shiftsSide);
+        String inHexValue = tec.readChart(inHex, c).getValue();
+        String hexSideValue;
+
+        // If hexside terrain doesn't exist, then the 'cost' (in CPA or shifts) is zero.
+        if (!onSideOfHex.isEmpty()) {
+            hexSideValue = tec.readChart(onSideOfHex.get(), c).getValue();
+        } else {
+            hexSideValue = "0";
+        }
+        List<String> values = new ArrayList<>();
+        values.add(inHexValue);
+        values.add(hexSideValue);
+        return values;
     }
 
 
@@ -241,7 +281,7 @@ public class MapSectionDefault implements MapSection {
         Iterable<String> i = () -> sides.iterator();
         Stream<String> streamOfSides = StreamSupport.stream(i.spliterator(), false);
         sideTerrain = streamOfSides
-                // We skip the first element because it is the hex number and not a hexside to terrain mapping
+                // We skip the first element because it is the hex number and not a hexside-to-terrain mapping
                 .skip(1)
                 .map(s -> s.split(DASH))
                 .collect(Collectors.toMap(a -> HexDefault.HexSide.valueOf(a[0].trim()),

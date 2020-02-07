@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MapController {
 
-    MapSectionDefault aMapSection = new MapSectionDefault("B", "5701");
+    Theater th = TheaterDefault.getInstance();
 
     @RequestMapping("/map/terraininhex")
     public String getTerrainInHex(@RequestParam(value = "hexnumber") String hexNumber) {
-        String value = aMapSection.getTerrainInHex(Integer.valueOf(hexNumber)).toString();
-        return value;
+        MapSection ms = th.getMap("B");
+        return ms.getTerrainInHex(Integer.valueOf(hexNumber)).toString();
     }
 }

@@ -21,6 +21,8 @@ import java.util.stream.StreamSupport;
 // It is represented closely to the physical, paper chart to aid comprehension and debugging
 public class TerrainEffectsChartDefault implements TerrainEffectsChart {
 
+    // There are two basic types of terrain. Terrain in a hex and terrain on a hex side
+    // These are different and disjoint. TODO: split into separate enumerations.
     public enum TerrainTypes {
         TERRAIN_TYPE,
         CLEAR, GRAVEL, SALT_MARSH, HEAVY_VEGETATION, ROUGH, MOUNTAIN, DELTA, DESERT, MAJOR_CITY,

@@ -1,5 +1,6 @@
 package map;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class TheaterDefault implements Theater {
@@ -15,19 +16,16 @@ public class TheaterDefault implements Theater {
     }
 
     private TheaterDefault() {
-        /*
-        MapSection sectionA = MapSectionDefault.create("A");
-        MapSection sectionB = MapSectionDefault.create("B");
-        MapSection sectionC = MapSectionDefault.create("C");
-        MapSection sectionD = MapSectionDefault.create("D");
-        MapSection sectionE = MapSectionDefault.create("E");
-        sections.put("A",sectionA);
+        sections = new HashMap<>();
+        //MapSection sectionA = new MapSectionDefault("A", "1101");
+        MapSection sectionB = new MapSectionDefault("B", "5701");
+        //sections.put("A",sectionA);
         sections.put("B",sectionB);
-        sections.put("C",sectionC);
-        sections.put("D",sectionD);
-        sections.put("E",sectionE);
-         */
+    }
 
+    @Override
+    public MapSection getMap(final String section) {
+        return sections.get(section);
     }
 
 
